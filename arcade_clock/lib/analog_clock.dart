@@ -36,16 +36,33 @@ class _ArcadeClockState extends State<ArcadeClock> {
   @override
   void initState() {
     super.initState();
+    widget.model.addListener(_updateModel);
     
     score = Score(hourScore: _now.hour, minuteScore: _now.minute);
 
+    _updateModel();
     _updateTime();
+  }
+
+  @override
+  void didUpdateWidget(ArcadeClock oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.model != oldWidget.model) {
+      oldWidget.model.removeListener(_updateModel);
+      widget.model.addListener(_updateModel);
+    }
   }
 
   @override
   void dispose() {
     _timer?.cancel();
+    widget.model.removeListener(_updateModel);
+    widget.model.dispose();
     super.dispose();
+  }
+
+  void _updateModel() {
+    setState(() {} );
   }
 
   void _updateTime() {
@@ -55,10 +72,10 @@ class _ArcadeClockState extends State<ArcadeClock> {
 
       bool shouldScoreMinutes = false;
       bool shouldScoreHours = false;
-      if (score.hourScore != int.parse(DateFormat('H').format(_now))) {
+      if (score.hourScore != hourInt()) {
         shouldScoreHours = true;
       }
-      else if (score.minuteScore != int.parse(DateFormat('m').format(_now))) {
+      else if (score.minuteScore != minuteInt()) {
         shouldScoreMinutes = true;
       }
 
@@ -97,8 +114,8 @@ class _ArcadeClockState extends State<ArcadeClock> {
               hourPaddle: hourPaddle,
               minutePaddle: minutePaddle,
               score: score,
-              actualHours: int.parse(DateFormat('H').format(_now)),
-              actualMinutes: int.parse(DateFormat('m').format(_now)),
+              actualHours: hourInt(),
+              actualMinutes: minuteInt(),
               backgroundColor: customTheme.backgroundColor,
               primaryColor: customTheme.primaryColor,
               accentColor: customTheme.accentColor
@@ -108,7 +125,7 @@ class _ArcadeClockState extends State<ArcadeClock> {
                 top: 10,
                 child: Align(
                   alignment: Alignment.topCenter,
-                  child: Text(score.hourScore.toString(),
+                  child: Text(score.hourDisplay(),
                       style: GoogleFonts.pressStart2P(textStyle: scoreStyle)),
                 )),
             Positioned.fill(
@@ -116,13 +133,21 @@ class _ArcadeClockState extends State<ArcadeClock> {
                 top: 10,
                 child: Align(
                   alignment: Alignment.topCenter,
-                  child: Text(score.minuteScore.toString(),
+                  child: Text(score.minuteDisplay(),
                       style: GoogleFonts.pressStart2P(textStyle: scoreStyle)),
                 )),
-            // Example of a hand drawn with [CustomPainter].
           ],
         ),
       ),
     );
+  }
+
+  int hourInt() {
+    String format = widget.model.is24HourFormat ? "H" : "h";
+    return int.parse(DateFormat(format).format(_now));
+  }
+
+  int minuteInt() {
+    return int.parse(DateFormat('m').format(_now));
   }
 }
