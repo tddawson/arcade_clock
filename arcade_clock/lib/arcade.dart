@@ -20,7 +20,11 @@ class Arcade extends StatelessWidget {
       @required this.hourPaddle,
       @required this.score,
       @required this.actualHours,
-      @required this.actualMinutes});
+      @required this.actualMinutes,
+      @required this.backgroundColor,
+      @required this.primaryColor,
+      @required this.accentColor,
+      });
 
   final Ball ball;
   final Paddle minutePaddle;
@@ -28,6 +32,9 @@ class Arcade extends StatelessWidget {
   final Score score;
   final int actualHours;
   final int actualMinutes;
+  final Color backgroundColor;
+  final Color primaryColor;
+  final Color accentColor;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +47,10 @@ class Arcade extends StatelessWidget {
               hourPaddle: hourPaddle,
               actualHours: actualHours,
               actualMinutes: actualMinutes,
-              score: score),
+              score: score,
+              backgroundColor: backgroundColor,
+              primaryColor: primaryColor,
+              accentColor: accentColor),
         ),
       ),
     );
@@ -55,6 +65,9 @@ class _ArcadePainter extends CustomPainter {
     @required this.score,
     @required this.actualHours,
     @required this.actualMinutes,
+    @required this.backgroundColor,
+    @required this.primaryColor,
+    @required this.accentColor,
   });
 
   Ball ball;
@@ -63,20 +76,23 @@ class _ArcadePainter extends CustomPainter {
   Score score;
   int actualHours;
   int actualMinutes;
+  Color backgroundColor;
+  Color primaryColor;
+  Color accentColor;
 
   @override
   void paint(Canvas canvas, Size size) {
-    final blackPaint = Paint();
-    blackPaint.color = Colors.black;
+    final backgroundPaint = Paint();
+    backgroundPaint.color = backgroundColor;
 
-    final whitePaint = Paint();
-    whitePaint.color = Colors.white;
+    final primaryPaint = Paint();
+    primaryPaint.color = primaryColor;
 
-    final grayPaint = Paint();
-    grayPaint.color = Colors.white30;
+    final accentPaint = Paint();
+    accentPaint.color = accentColor;
 
     // Clear screen
-    canvas.drawRect(Offset.zero & size, blackPaint);
+    canvas.drawRect(Offset.zero & size, backgroundPaint);
 
     // Draw dashed line down the middle
     double dashY = 0;
@@ -85,7 +101,7 @@ class _ArcadePainter extends CustomPainter {
     while (dashY < size.height) {
       canvas.drawRect(
           Rect.fromLTWH((size.width - dashSize) / 2, dashY, dashSize, dashSize),
-          (dashNum == 2 || dashNum == 3) ? whitePaint : grayPaint);
+          (dashNum == 2 || dashNum == 3) ? primaryPaint : accentPaint);
       dashY += dashSize * 2;
       dashNum++;
     }
@@ -99,11 +115,11 @@ class _ArcadePainter extends CustomPainter {
     canvas.drawRect(
         Rect.fromLTWH(
             hourPaddle.x, hourPaddle.y, hourPaddle.width, hourPaddle.height),
-        whitePaint);
+        primaryPaint);
     canvas.drawRect(
         Rect.fromLTWH(minutePaddle.x, minutePaddle.y, minutePaddle.width,
             minutePaddle.height),
-        whitePaint);
+        primaryPaint);
 
     // Update and draw ball
     if (ball.scored(size.width)) {
@@ -117,7 +133,7 @@ class _ArcadePainter extends CustomPainter {
     }
     ball.checkBounce(size.height);
     canvas.drawRect(
-        Rect.fromLTWH(ball.x, ball.y, ball.size, ball.size), whitePaint);
+        Rect.fromLTWH(ball.x, ball.y, ball.size, ball.size), primaryPaint);
   }
 
   @override

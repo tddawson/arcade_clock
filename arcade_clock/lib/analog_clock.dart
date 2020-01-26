@@ -74,8 +74,14 @@ class _ArcadeClockState extends State<ArcadeClock> {
 
   @override
   Widget build(BuildContext context) {
+
+    final customTheme = Theme.of(context).brightness == Brightness.dark ?
+      Theme.of(context).copyWith(backgroundColor: Colors.black, primaryColor: Colors.white, accentColor: Colors.white30) :
+      Theme.of(context).copyWith(backgroundColor: Colors.white, primaryColor: Colors.black, accentColor: Colors.black38);
+
+
     final time = DateFormat.Hms().format(DateTime.now());
-    final scoreStyle = TextStyle(color: Colors.white, fontSize: 30);
+    final scoreStyle = TextStyle(color: customTheme.primaryColor, fontSize: 30);
     
     return Semantics.fromProperties(
       properties: SemanticsProperties(
@@ -93,6 +99,9 @@ class _ArcadeClockState extends State<ArcadeClock> {
               score: score,
               actualHours: int.parse(DateFormat('H').format(_now)),
               actualMinutes: int.parse(DateFormat('m').format(_now)),
+              backgroundColor: customTheme.backgroundColor,
+              primaryColor: customTheme.primaryColor,
+              accentColor: customTheme.accentColor
             ),
             Positioned.fill(
                 left: -80,
