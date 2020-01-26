@@ -1,15 +1,9 @@
-# Flutter Clock
+# Pong-Inspired Arcade Clock
 
-Welcome to Flutter Clock!
+This project began as an entry to the [Flutter Clock Challenge](https://flutter.dev/clock). Some features and fixes have been added after the contest concluded.
 
-See [flutter.dev/clock](https://flutter.dev/clock) for how to get started, submission requirements, contest rules, and FAQs.
+<img src='arcade_clock/dark-mode.png' width='500'>
+The hour and minute side play Pong. When the hour or minute changes, the corresponding side lets the ball pass and the "score" is updated to reflect the time.
 
-See a [live demo](https://maryx.github.io/flutter_clock) with Flutter for Web!
-
-Example [Analog Clock](analog_clock)
-
-<img src='analog_clock/analog.gif' width='350'>
-
-Example [Digital Clock](digital_clock)
-
-<img src='digital_clock/digital.gif' width='350'>
+<img src='arcade_clock/bright-mode.png' width='500'>
+Available in bright and dark modes as a 12 or 24 hour clock.

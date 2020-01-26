@@ -1,10 +1,9 @@
-# Analog Clock
+# Pong-Inspired Arcade Clock
 
-This app is an example of an analog clock.
-It has a light theme and a dark theme, and displays sample weather and location data.
+This project began as an entry to the [Flutter Clock Challenge](https://flutter.dev/clock). Some features and fixes have been added after the contest concluded.
 
-<img src='analog.gif' width='350'>
+<img src='dark-mode.png' width='500'>
+The hour and minute side play Pong. When the hour or minute changes, the corresponding side lets the ball pass and the "score" is updated to reflect the time.
 
-<img src='analog_dark.png' width='350'>
-
-<img src='analog_light.png' width='350'>
+<img src='bright-mode.png' width='500'>
+Available in bright and dark modes as a 12 or 24 hour clock.
