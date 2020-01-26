@@ -12,15 +12,11 @@ class Ball {
     this.y += this.yDir;
   }
 
-  void checkBounces(width, height) {
-    if (x >= width - size) {
-      x = width - size - 1;
-      bounceHorizontally();
-    } else if (x <= 0) {
-      x = 1;
-      bounceHorizontally();
-    }
+  bool scored(width) {
+    return x >= width - size || x <= 0;
+  }
 
+  void checkBounce(height) {
     if (y >= height - size) {
       y = height - size - 1;
       bounceVertically();

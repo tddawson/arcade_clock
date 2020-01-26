@@ -13,6 +13,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'arcade.dart';
 import 'ball.dart';
 import 'paddle.dart';
+import 'score.dart';
 
 class ArcadeClock extends StatefulWidget {
   const ArcadeClock(this.model);
@@ -28,13 +29,16 @@ class _ArcadeClockState extends State<ArcadeClock> {
   Timer _timer;
 
   Ball ball = Ball(x: 40.0, y: 40.0, xDir: 2, yDir: 2, size: 10);
-  Paddle minutePaddle = Paddle(x: 0, y: 20, height: 50, width: 10, speed: 15);
-  Paddle hourPaddle = Paddle(x: 0, y: 20, height: 50, width: 10, speed: 15);
+  Paddle minutePaddle = Paddle(x: 0, y: 20, height: 50, width: 10, speed: 3, isHourHand: false);
+  Paddle hourPaddle = Paddle(x: 0, y: 20, height: 50, width: 10, speed: 3, isHourHand: true);
+  Score score;
 
   @override
   void initState() {
     super.initState();
-    // Set the initial values.
+    
+    score = Score(hourScore: _now.hour, minuteScore: _now.minute);
+
     _updateTime();
   }
 
@@ -48,8 +52,18 @@ class _ArcadeClockState extends State<ArcadeClock> {
     setState(() {
       _now = DateTime.now();
       ball.update();
-      minutePaddle.update(ball);
-      hourPaddle.update(ball);
+
+      bool shouldScoreMinutes = false;
+      bool shouldScoreHours = false;
+      if (score.hourScore != int.parse(DateFormat('H').format(_now))) {
+        shouldScoreHours = true;
+      }
+      else if (score.minuteScore != int.parse(DateFormat('m').format(_now))) {
+        shouldScoreMinutes = true;
+      }
+
+      minutePaddle.update(ball, shouldScoreMinutes, shouldScoreHours);
+      hourPaddle.update(ball, shouldScoreMinutes, shouldScoreHours);
 
       _timer = Timer(
         Duration(milliseconds: 1000 ~/ 60),
@@ -62,9 +76,7 @@ class _ArcadeClockState extends State<ArcadeClock> {
   Widget build(BuildContext context) {
     final time = DateFormat.Hms().format(DateTime.now());
     final scoreStyle = TextStyle(color: Colors.white, fontSize: 30);
-    final hour = DateFormat('HH').format(_now);
-    final minute = DateFormat('mm').format(_now);
-
+    
     return Semantics.fromProperties(
       properties: SemanticsProperties(
         label: 'Arcade clock with time $time',
@@ -78,13 +90,16 @@ class _ArcadeClockState extends State<ArcadeClock> {
               ball: ball,
               hourPaddle: hourPaddle,
               minutePaddle: minutePaddle,
+              score: score,
+              actualHours: int.parse(DateFormat('H').format(_now)),
+              actualMinutes: int.parse(DateFormat('m').format(_now)),
             ),
             Positioned.fill(
                 left: -80,
                 top: 10,
                 child: Align(
                   alignment: Alignment.topCenter,
-                  child: Text(hour,
+                  child: Text(score.hourScore.toString(),
                       style: GoogleFonts.pressStart2P(textStyle: scoreStyle)),
                 )),
             Positioned.fill(
@@ -92,7 +107,7 @@ class _ArcadeClockState extends State<ArcadeClock> {
                 top: 10,
                 child: Align(
                   alignment: Alignment.topCenter,
-                  child: Text(minute,
+                  child: Text(score.minuteScore.toString(),
                       style: GoogleFonts.pressStart2P(textStyle: scoreStyle)),
                 )),
             // Example of a hand drawn with [CustomPainter].

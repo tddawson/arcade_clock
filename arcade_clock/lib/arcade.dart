@@ -6,6 +6,7 @@ import 'package:analog_clock/paddle.dart';
 import 'package:flutter/material.dart';
 import 'ball.dart';
 import 'paddle.dart';
+import 'score.dart';
 
 /// A clock hand that is drawn with [CustomPainter]
 ///
@@ -13,15 +14,20 @@ import 'paddle.dart';
 /// This hand is used to build the second and minute hands, and demonstrates
 /// building a custom hand.
 class Arcade extends StatelessWidget {
-  const Arcade({
-    @required this.ball,
-    @required this.minutePaddle,
-    @required this.hourPaddle,
-  });
+  const Arcade(
+      {@required this.ball,
+      @required this.minutePaddle,
+      @required this.hourPaddle,
+      @required this.score,
+      @required this.actualHours,
+      @required this.actualMinutes});
 
   final Ball ball;
   final Paddle minutePaddle;
   final Paddle hourPaddle;
+  final Score score;
+  final int actualHours;
+  final int actualMinutes;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +35,12 @@ class Arcade extends StatelessWidget {
       child: SizedBox.expand(
         child: CustomPaint(
           painter: _ArcadePainter(
-              ball: ball, minutePaddle: minutePaddle, hourPaddle: hourPaddle),
+              ball: ball,
+              minutePaddle: minutePaddle,
+              hourPaddle: hourPaddle,
+              actualHours: actualHours,
+              actualMinutes: actualMinutes,
+              score: score),
         ),
       ),
     );
@@ -41,11 +52,17 @@ class _ArcadePainter extends CustomPainter {
     @required this.ball,
     @required this.minutePaddle,
     @required this.hourPaddle,
+    @required this.score,
+    @required this.actualHours,
+    @required this.actualMinutes,
   });
 
   Ball ball;
   Paddle minutePaddle;
   Paddle hourPaddle;
+  Score score;
+  int actualHours;
+  int actualMinutes;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -74,6 +91,8 @@ class _ArcadePainter extends CustomPainter {
     }
 
     // Draw paddles
+    hourPaddle.setScreenSize(size.width, size.height);
+    minutePaddle.setScreenSize(size.width, size.height);
     double xOffset = 20;
     hourPaddle.x = xOffset;
     minutePaddle.x = size.width - (xOffset + minutePaddle.width);
@@ -86,8 +105,17 @@ class _ArcadePainter extends CustomPainter {
             minutePaddle.height),
         whitePaint);
 
-    // Draw ball
-    ball.checkBounces(size.width, size.height);
+    // Update and draw ball
+    if (ball.scored(size.width)) {
+      // Reset ball location
+      ball.x = size.width / 2;
+      ball.y = size.height / 2;
+
+      // Update score to match time
+      score.hourScore = actualHours;
+      score.minuteScore = actualMinutes;
+    }
+    ball.checkBounce(size.height);
     canvas.drawRect(
         Rect.fromLTWH(ball.x, ball.y, ball.size, ball.size), whitePaint);
   }
